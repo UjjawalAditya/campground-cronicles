@@ -3,6 +3,7 @@ const mongoose=require("mongoose")
 const app=express()
 const path=require("path")
 const Campground=require("./models/campground");
+const Review=require("./models/review")
 const methodOverride=require('method-override');
 const ejsMate=require('ejs-mate')
 const catchasync=require("./utils/catchasync")
@@ -53,7 +54,7 @@ app.post("/camp", catchasync(async (req, res, next) => {
         throw new expresserror(msg, 400);
     }
 
-    // Assuming `req.body.camp` contains the campground data
+   
     const camp = new Campground(req.body.camp);
     await camp.save();
     res.redirect(`/camp/${camp._id}`);
@@ -76,10 +77,20 @@ app.put("/camp/:id",async(req,res)=>{
 //details of camp
 
 app.get("/camp/:id",async(req,res)=>{
-    const campground=await Campground.findById(req.params.id)
+    const campground=await Campground.findById(req.params.id).populate("reviews")
+    console.log(campground)
     
     res.render("campgrounds/show",{campground});
 });
+app.post("/camp/:id/reviews",catchasync(async (req,res)=>{
+  const campground= await Campground.findById(req.params.id)
+     const review=  new Review(req.body.review);
+     campground.reviews.push(review)
+     await review.save()
+     await campground.save()
+     console.log(review)
+     res.redirect(`/camp/${campground._id}`)
+}))
 app.all("*",(req,res,next)=>{
     next(new expresserror("Page Not Found",404))
 })
