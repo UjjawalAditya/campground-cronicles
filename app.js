@@ -9,6 +9,7 @@ const ejsMate=require('ejs-mate')
 const catchasync=require("./utils/catchasync")
 const expresserror=require("./utils/expresserror")
 const joi=require('joi');
+const reviewSchema=require('./models/reviewschema')
 
 
 app.engine('ejs',ejsMate)
@@ -23,6 +24,19 @@ mongoose.connect('mongodb://127.0.0.1:27017/miniproject', { useNewUrlParser: tru
 }).catch((e)=>{
     console.log(e)
 })
+//middleware 
+const validateReview = (req, res, next) => {
+    const { error } = reviewSchema.validate(req.body.review); // Access validate method of reviewSchema
+
+    if (error) {
+        console.log(error);
+        const msg = error.details.map(el => el.message).join(",");
+        console.log(msg);
+        throw new expresserror(msg, 400);
+    } else {
+        next();
+    }
+};
 //list campgrounds
 
 app.get('/camp',async(req,res)=>{
@@ -82,6 +96,7 @@ app.get("/camp/:id",async(req,res)=>{
     
     res.render("campgrounds/show",{campground});
 });
+
 app.post("/camp/:id/reviews",catchasync(async (req,res)=>{
   const campground= await Campground.findById(req.params.id)
      const review=  new Review(req.body.review);

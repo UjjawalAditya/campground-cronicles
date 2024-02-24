@@ -1,68 +1,46 @@
 <% layout('layouts/boilerplate') %>
-
-    <div class="col-6 offset-3  ">
-        <div class="card" style="width: 30rem;" >
-            <img src="<%= campground.image %>" class="card-img-top" style="max-width: 100%; height: 100%;">
-            <div class="card-body">
-              <h5 class="card-title"><h1><%= campground.title %></h1></h5>
-              <p class="card-text"><%= campground.description %></p>
-            </div>
-            <ul class="list-group list-group-flush">
-              <li class="list-group-item"> <h1><%= campground.location %></h1></li>
-              <li class="list-group-item"><h1> price is:<%= campground.price %></h1></li>
-              
-            </ul>
-            <div class="card-body">
-              <a class="btn btn-primary "  href="/camp" class="card-link">ALL Camp</a>
-              
-              <a class="btn btn-primary" href="/camp/<%=campground.id%>/edit" class="card-link">Edit</a>
-            
-            </div>
-          
-            <form method="post" action="/camp/<%=campground._id %>/reviews" class="mb-3  " m>
-              <h2>Leave a Review</h2>
-              <div class="mb-3">
-                <label class="form-label " for="rating">rating</label>
-                <input class="form-range" type="range" min="1" max="5" name="review[rating]" id="rating">
-              </div>
-                <div class="mb-3">
-
-                  <label class="form-label " for="body">Review</label>
-              <textarea class="form-control " name="review[body]" id="body" cols="50" rows="3"></textarea>
-
-                </div>
-                <button class="btn btn-success " >Submit</button>
-              
-            </form>
-            <div class="mb-3">
-              <% for(let review of campground.reviews){ %>
-                <div class="mb-3">
-                  <p><%=review.body%></p>
-                  <p> rating:<%=review.rating%></p>
-                                  
-                </div>
-                
-                <% } %>
-            </div>
-          
-            
-          </div>
-        
-
-          
-        
-          
-         
-
-
-  
-  
-
- 
+<div class="row">
+  <div class="col-6">
+    <div class="card" style="width: 30rem;">
+      <img src="<%= campground.image %>" class="card-img-top" style="max-width: 100%; height: 100%;">
+      <div class="card-body">
+        <h1 class="card-title"><%= campground.title %></h1>
+        <p class="card-text"><%= campground.description %></p>
+      </div>
+      <ul class="list-group list-group-flush">
+        <li class="list-group-item"><%= campground.location %></li>
+        <li class="list-group-item">Price: <%= campground.price %></li>
+      </ul>
+      <div class="card-body">
+        <a class="btn btn-primary" href="/camp">ALL Camp</a>
+        <a class="btn btn-primary" href="/camp/<%= campground.id %>/edit">Edit</a>
+      </div>
+      
+      
+    </div>
     
-   
+  </div>
+  <div class="col-6">
+    <form method="post" action="/camp/<%= campground._id %>/reviews" class="needs-validation mb-3" novalidate>
+      <h2>Leave a Review</h2>
+      <div class="mb-3">
+        <label class="form-label" for="rating">Rating</label>
+        <input class="form-range" type="range" min="1" max="5" name="review[rating]" id="rating">
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="body">Review</label>
+        <textarea class="form-control" name="review[body]" id="body" cols="50" rows="3" required></textarea>
+      </div>
+      <button class="btn btn-success">Submit</button>
+    </form>
     
-    
-    
-
-    
+    <% for (let review of campground.reviews) { %>
+    <div class="card mb-3">
+      <div class="card-body">
+        <h5 class="card-title">Rating: <%= review.rating %></h5>
+        <p class="card-text"><%= review.body %></p>
+      </div>
+    </div>
+    <% } %>
+  </div>
+</div>
